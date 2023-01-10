@@ -154,10 +154,34 @@ Note how the minimum latency can go down with increasing traffic, due to cache-e
 
 ## Syncing client and server
 
-One can obviously route traffic back to the same host, in which case async mode is never required.
+One can route traffic back to the same host, in which case async mode is never required. The server and client are implicitly synced. Note that the use of VRF's might be required to avoid the device directly sending to itself instead of to the outgoing interface
+Some example VRF code, in which case one interface (isolatedinterface0) is placed in a VRF, and thus cannot see the incoming interface directly in its routing table:
+
+```
+ip link add dev vrf1 type vrf table 10
+ip l set dev isolatedinterface0 master vrf1
+ip r add default via 192.168.88.1 vrf vrf1
+ip l set dev vrf1 up
+ip a add dev isolatedinterface0 192.168.88.2/24 
+ip a add dev incominginterface0 192.168.88.1/24 
+```
+
+```mermaid
+graph LR
+A[Client + Server on same machine] -- Test traffic out on isolatedinterface0 --> DUT((DUT))  -- Test traffic in on incominginterface0 --> A
+```
+
 In case two different systems are used, one can use PTP for example to sync the CLOCK_REALTIME.
 Timestamp delays are reported in microseconds. If the two systems are not submicrosecond synced, this will not be correct. 
 (HW-Timestamping with PTP achieves submicrosecond clock sync)
+
+```mermaid
+graph LR
+A[Client] -- Test traffic --> DUT((DUT)) -- Test Traffic --> B[Server]
+A -- PTP sync --> B
+```
+
+
 
 ## Taking into account Linux backpressure
 
@@ -186,5 +210,5 @@ tc qdisc replace dev slowintfdev0 root netem delay 10us limit 5
 ```
 
 This enforces linux to queue the packets, and decouple the sender thread from the interface dequeueing driver.
-Tuning the buffer size of the netem qdisc allows trading off bursty traffic (which generally achieves higher throughput) at the expense of latency jitter.
+Tuning the buffer size of the netem qdisc (now at limit 5) allows trading off bursty traffic (which generally achieves higher throughput) at the expense of latency jitter.
 
