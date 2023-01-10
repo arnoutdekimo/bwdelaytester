@@ -76,7 +76,7 @@ First packet seen from 192.168.99.1:39484
 
 ## Live graphing with gnuplot
 
-The data outputted can be plotted after the test, or in realtime using the gnuplot scripts from XX.
+The data outputted can be plotted after the test, or in realtime using the gnuplot scripts from [`liveplot.gnuplot`](plotting/liveplot.gnuplot).
 
 Using simple linux piping and netcat, one can transmit the output data to another PC:
 
@@ -98,6 +98,33 @@ The gnuplot script will continuously poll for new updates in the file data.dat, 
 ![Alt Text](docs/bwdelaytesterlive2.gif)
 
 Press control+x to stop gnuplot from plotting, P to zoom back to the previous preset
+
+## Bandwidth-delay sweep plot
+
+When sweeping the bandwidth range from 0 till the supplied max with the -s option on both client and server, the bandwidth is gradually increased over time.
+It is possible to still follow this output in time as explained above.
+But when exiting the server, it will print and extra chunk of data, to STDERR, which contains the bandwidth slot, and its corresponding losspercent, minimum maximum, average delay and amount of times the measuring interval fell inside this slot.
+
+``` 
+163070000 163070 0 0 75 1027 207
+164310000 164310 0 0 74 1048 201
+163600000 163600 0 0 74 966 206
+163770000 163770 0 0 74 1267 217
+162930000 162930 0 0 75 1034 211
+^C70 0.000000 0 3594 154 14    <====== Point of control+c on server side
+90 0.000000 0 3687 176 19
+110 0.000000 0 3307 156 19
+120 0.000000 0 3723 163 18
+140 0.000000 0 4820 155 20
+160 0.000000 0 4195 161 20
+...
+```
+
+One can copy-paste the STDERR output again to a plotfile (bwdelaydat.txt), and run gnuplot again on it [`bwdelay.plot`](plotting/bwdelay.plot). This could yield something like:
+
+<img src="docs/bwdelayoutput.png">
+
+Note how the minimum latency can go down with increasing traffic, due to cache-effects and reduced context switching. Not also that at a certain point the link might get (temporarly) saturated, causing loss and higher maximum delays. 
 
 ## Syncing client and server
 
