@@ -160,5 +160,5 @@ tc qdisc replace dev slowintfdev0 root netem delay 10us limit 5
 ```
 
 This enforces linux to queue the packets, and decouple the sender thread from the interface dequeueing driver.
-Tuning the buffer size of the netem qdisc allows trading off bursty traffic (which generally achieves higher throughput) at the expense of latency jitter.
+Tuning the buffer size of the netem qdisc (now at limit 5) allows trading off bursty traffic (which generally achieves higher throughput) at the expense of latency jitter.
 
