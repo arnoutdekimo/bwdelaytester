@@ -95,7 +95,7 @@ root@server:~/# ./bwdelaytester | tee /dev/tty  | nc 10.0.0.129 1234
 
 The gnuplot script will continuously poll for new updates in the file data.dat, and update its output accordingly:
 
-![Alt Text](bwdelaytesterlive2.gif)
+![Alt Text](docs/bwdelaytesterlive2.gif)
 
 Press control+x to stop gnuplot from plotting, P to zoom back to the previous preset
 
