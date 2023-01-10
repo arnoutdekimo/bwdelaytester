@@ -30,6 +30,7 @@
  * It has a very simple stdout/stderr periodic interface, which can easily be used by e.g. gnuplot to make realtime graphs from.
  *
  * Optionally an automated sweep can be configured to sweep a bandwidth range
+ * At the end of the server execution, a latency histogram data is printed as well
  */
 
 /* ***********************************************************************************************************************************************
@@ -69,6 +70,10 @@
 #define GRAPH_BWBUCKETS         300         /* Local resolution before downsampling in bw direction at the end. Resolution is GRAPHMAXBW/this */
 #define GRAPH_BUCKETRES         (GRAPHMAXBW/GRAPH_BWBUCKETS)
 #define BUCKET_CONTENT_THRESH   10          /* At least 10 samples (+- 1 sec) inside a bucket */
+
+/* Latency histogram buckets */
+#define LATHIST_MAX_LATMS       20
+#define LATHIST_QUEUECOUNT      100
 
 #define xstr(s) str(s)
 #define str(s) #s
@@ -122,6 +127,9 @@ struct bwdelaypoint
 
     uint64_t total_samples_for_this_bucket; /* Divide counters at the end */
 } bwdelaypoints[GRAPH_BWBUCKETS];
+
+
+uint64_t latencyhits[LATHIST_QUEUECOUNT];
 /*
  * ***********************************************************************************************************************************************
  * Private Function Prototypes
@@ -145,8 +153,20 @@ static void die(char *s)
 void sig_handler(int signum)
 {
     /*
+     * If we were the server, first print overall latency histogram data
+     */
+    if(!progsettings.clientmode) {
+        fprintf(stderr, "## Printing latency histogram:\n");
+        for(int i = 0; i < LATHIST_QUEUECOUNT; i++) {
+            fprintf(stderr, "%u %lu\n", i*LATHIST_MAX_LATMS*1000/LATHIST_QUEUECOUNT ,latencyhits[i]);
+
+        }
+    {
+
+    /*
      * If we were the server, in sweep mode, print our sweep-mode stats before quitting
      */
+    fprintf(stderr, "## Printing sweep data:\n");
     if(!progsettings.clientmode && progsettings.sweepmode) {
         for(int i = 0; i < GRAPH_BWBUCKETS; i++) {
             if(bwdelaypoints[i].total_samples_for_this_bucket > BUCKET_CONTENT_THRESH) {
@@ -263,6 +283,10 @@ static void parsePacket(bdt_pkt *pkt, int len)
     }
 
     avgdelay_last_intv += currentdelay; /* Do division upon print */
+
+    int latencybucket = currentdelay*LATHIST_QUEUECOUNT/LATHIST_MAX_LATMS/1000;
+    if(latencybucket >= LATHIST_QUEUECOUNT) latencybucket = LATHIST_QUEUECOUNT-1;
+    latencyhits[latencybucket]++;
 
     if(rcvdpktcounter < pkt->ctr) {
         drops_last_intv += (pkt->ctr - rcvdpktcounter);

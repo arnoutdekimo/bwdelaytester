@@ -99,28 +99,54 @@ The gnuplot script will continuously poll for new updates in the file data.dat, 
 
 Press control+x to stop gnuplot from plotting, P to zoom back to the previous preset
 
+## Latency histogram plotting
+
+At the end of the server execution, the program dumps something like this on stderr:
+
+```
+ 214260000 214260 0 0 121 1152 418
+212450000 212450 0 0 121 1832 468
+212270000 212270 0 0 120 1229 406
+211800000 211800 0 0 120 1225 399
+213800000 213800 0 0 119 1079 377
+^C## Printing latency histogram:   <======= Point of control+C
+0 1137150
+200 1512055
+400 616963
+600 572417
+...
+
+```
+
+One can copy-paste this block into a file latencydata.txt, and execute the gnuplotscript from [`latencyhistplot.plot`](plotting/latencyhistplot.plot).
+This yields a simple histogram overview of all the latencies during the entire program exection. And example output can look like this:
+
+
+
+
+<img src="docs/latencyhistogram.png">
+
+
 ## Bandwidth-delay sweep plot
 
 When sweeping the bandwidth range from 0 till the supplied max with the -s option on both client and server, the bandwidth is gradually increased over time.
 It is possible to still follow this output in time as explained above.
 But when exiting the server, it will print and extra chunk of data, to STDERR, which contains the bandwidth slot, and its corresponding losspercent, minimum maximum, average delay and amount of times the measuring interval fell inside this slot.
 
-``` 
-163070000 163070 0 0 75 1027 207
-164310000 164310 0 0 74 1048 201
-163600000 163600 0 0 74 966 206
-163770000 163770 0 0 74 1267 217
-162930000 162930 0 0 75 1034 211
-^C70 0.000000 0 3594 154 14    <====== Point of control+c on server side
-90 0.000000 0 3687 176 19
-110 0.000000 0 3307 156 19
-120 0.000000 0 3723 163 18
-140 0.000000 0 4820 155 20
-160 0.000000 0 4195 161 20
+```
 ...
+19400 258
+19600 244
+19800 21970
+## Printing sweep data:  <====== 
+1690 0.774273 0 17619 1188 12
+1700 0.000718 0 6187 630 92
+1710 0.107607 0 12570 835 55
+...
+
 ```
 
-One can copy-paste the STDERR output again to a plotfile (bwdelaydat.txt), and run gnuplot again on it [`bwdelay.plot`](plotting/bwdelay.plot). This could yield something like:
+One can copy-paste the STDERR output again after this marker to a plotfile (bwdelaydat.txt), and run gnuplot again on it [`bwdelay.plot`](plotting/bwdelay.plot). This could yield something like:
 
 <img src="docs/bwdelayoutput.png">
 
