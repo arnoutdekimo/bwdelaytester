@@ -1,4 +1,4 @@
-# Create a Plot or User and System CPU Usage, update every 5 seconds
+# Create a Plot or User and System CPU Usage, update regularly
 #
 set title "bwdelaytester results"
 #set term png  size 1600,720
