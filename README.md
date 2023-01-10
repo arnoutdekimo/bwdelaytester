@@ -110,10 +110,13 @@ At the end of the server execution, the program dumps something like this on std
 211800000 211800 0 0 120 1225 399
 213800000 213800 0 0 119 1079 377
 ^C## Printing latency histogram:   <======= Point of control+C
-0 1137150
-200 1512055
-400 616963
-600 572417
+0 63014 21
+200 78175 48
+400 33604 59
+600 31535 70
+800 26685 79
+1000 5678 81
+1200 2167 82
 ...
 
 ```
@@ -135,9 +138,11 @@ But when exiting the server, it will print and extra chunk of data, to STDERR, w
 
 ```
 ...
-19400 258
-19600 244
-19800 21970
+19000 0 100
+19200 0 100
+19400 0 100
+19600 0 100
+19800 0 100
 ## Printing sweep data:  <====== 
 1690 0.774273 0 17619 1188 12
 1700 0.000718 0 6187 630 92

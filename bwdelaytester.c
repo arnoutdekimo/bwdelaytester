@@ -157,11 +157,17 @@ void sig_handler(int signum)
      */
     if(!progsettings.clientmode) {
         fprintf(stderr, "## Printing latency histogram:\n");
+        uint64_t totpkts = 0;
         for(int i = 0; i < LATHIST_QUEUECOUNT; i++) {
-            fprintf(stderr, "%u %lu\n", i*LATHIST_MAX_LATMS*1000/LATHIST_QUEUECOUNT ,latencyhits[i]);
-
+            totpkts += latencyhits[i];
         }
-    {
+
+        uint64_t cumul = 0;
+        for(int i = 0; i < LATHIST_QUEUECOUNT; i++) {
+            cumul += latencyhits[i];
+            fprintf(stderr, "%u %lu %lu\n", i*LATHIST_MAX_LATMS*1000/LATHIST_QUEUECOUNT ,latencyhits[i], cumul*100/totpkts);
+        }
+    }
 
     /*
      * If we were the server, in sweep mode, print our sweep-mode stats before quitting
