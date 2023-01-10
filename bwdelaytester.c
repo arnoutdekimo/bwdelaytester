@@ -556,6 +556,8 @@ static void runServer()
         }
     }
 
+    printf("# bytes_last_intv packets_last_intv drops_last_intv drops_consq_last_intv mindelayus_last_intv maxdelayus_last_intv avgdelayus_last_intv \n");
+
     while(1)
     {
 
@@ -582,7 +584,7 @@ static void runServer()
 
 static void print_usage_and_exit() {
     printf("\n");
-    printf("Bandwith-delay tester. \n");
+    printf("Bandwidth-delay tester. \n");
     printf("\n");
     printf(" Send IPv4 UDP packets containing timestamping information from sender to receiver, to determine received bandwidth and latency\n");
     printf("\t\n");
