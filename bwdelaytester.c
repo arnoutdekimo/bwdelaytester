@@ -292,7 +292,7 @@ static void parsePacket(bdt_pkt *pkt, int len)
 
     int latencybucket = currentdelay*LATHIST_QUEUECOUNT/LATHIST_MAX_LATMS/1000;
     if(latencybucket >= LATHIST_QUEUECOUNT) latencybucket = LATHIST_QUEUECOUNT-1;
-	if(latencybucket < 0) latencybucket = 0;
+    if(latencybucket < 0) latencybucket = 0;
     latencyhits[latencybucket]++;
 
     if(rcvdpktcounter < pkt->ctr) {
